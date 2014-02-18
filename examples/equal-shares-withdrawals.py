@@ -39,7 +39,7 @@ class EqualSharesWithdrawals(Contract):
             mktx(B, contract.storage[k + 3] / 30, 0, 0)
             mktx(C, contract.storage[k + 3] / 30, 0, 0)
 
-            contract.storage[k + 3] -= contract.storage[k + 3] / 3
+            contract.storage[k + 3] -= (contract.storage[k + 3] / 30) * 3
 
 
 class EqualSharesWithdrawalsRun(Simulation):
@@ -89,4 +89,4 @@ class EqualSharesWithdrawalsRun(Simulation):
         tx = Tx(sender='bob', value=1000)
         self.run(tx, self.contract, block)
         assert len(self.contract.txs) == 3
-        assert self.contract.txs == [('alice', 88888888888888888880, 0, 0), ('bob', 88888888888888888880, 0, 0), ('charles', 88888888888888888880, 0, 0)]
+        assert self.contract.txs == [('alice', 161999999999999999983, 0, 0), ('bob', 161999999999999999983, 0, 0), ('charles', 161999999999999999983, 0, 0)]
