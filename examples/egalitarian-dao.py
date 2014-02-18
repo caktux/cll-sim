@@ -32,8 +32,6 @@ class EgalitarianDao(Contract):
         elif contract.storage[k + 3] > 0 and tx.value <= 1000 * 10 ** 18:
             if contract.storage[k + 3] < tx.value * 3:
                 stop("Insufficient funds for withdrawal")
-            if tx.value <= block.basefee * 200:
-                stop("Insufficient fee for withdrawal")
 
             mktx(A, contract.storage[k + 3] / 30, 0, 0)
             mktx(B, contract.storage[k + 3] / 30, 0, 0)
