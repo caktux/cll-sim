@@ -4,6 +4,7 @@ class EqualSharesWithdrawals(Contract):
     """Equal shares withdrawals example contract"""
 
     def run(self, tx, contract, block):
+        participants = 3
         k = 1000
 
         if tx.value < block.basefee * 200:
@@ -11,27 +12,17 @@ class EqualSharesWithdrawals(Contract):
         if contract.storage[k] == 0:
             if tx.value < 1000 * 10 ** 18:
                 stop("Insufficient value")
-        if contract.storage[k] == 0:
-            if tx.value < 2000 * 10 ** 18:
+        if contract.storage[k + contract.storage[k + participants + 1]] == 0 and contract.storage[k + participants + 1] < participants:
+            if tx.value < 1100 * 10 ** 18:
                 stop("Insufficient fee for storage")
-            if contract.storage[k + 1] == 0:
-                contract.storage[k] = 1
-                contract.storage[k + 3] += tx.value - block.basefee * 200
-                stop(tx.sender + " is in.")
-        elif contract.storage[k] == 1 and contract.storage[k + 1] == 0:
-            if tx.value < 2000 * 10 ** 18:
-                stop("Insufficient fee for storage")
-            if contract.storage[k + 2] == 0:
-                contract.storage[k + 1] = 1
-                contract.storage[k + 3] += tx.value - block.basefee * 200
-                stop(tx.sender + " is in.")
-        elif contract.storage[k + 1] == 1 and contract.storage[k + 2] == 0:
-            if tx.value < 2000 * 10 ** 18:
-                stop("Insufficient fee for storage")
-            contract.storage[k + 2] = 1
-            contract.storage[k + 3] += tx.value - block.basefee * 200
-            stop(tx.sender + " is in.")
-        elif contract.storage[k + 3] > 0 and tx.value <= 1000 * 10 ** 18:
+            contract.storage[k + contract.storage[k + participants + 1]] = 1
+            contract.storage[k + participants] += tx.value - block.basefee * 200
+            contract.storage[k + participants + 1] += 1
+            log(tx.sender + " is in.")
+        elif tx.value >= 1100 * 10 ** 18 and contract.storage[k + 4] == 3:
+            contract.storage[k + participants] += tx.value - block.basefee * 200
+            log(tx.sender + " added " + str(tx.value))
+        elif tx.value <= 1000 * 10 ** 18:
             if contract.storage[k + 3] < tx.value * 3:
                 stop("Insufficient funds for withdrawal")
 
@@ -81,12 +72,21 @@ class EqualSharesWithdrawalsRun(Simulation):
         assert len(self.contract.txs) == 3
         assert self.contract.txs == [('alice', 199999999999999999980, 0, 0), ('bob', 199999999999999999980, 0, 0), ('charles', 199999999999999999980, 0, 0)]
 
-    def test_two_withdraws(self):
+    def test_one_deposits(self):
         block = Block(timestamp=self.ts_zero + 30 * 86400 + 1)
+        block.contract_storage(self.contract.D)[self.contract.D] = 100000 * 10 ** 18
+        tx = Tx(sender='alice', value=1200 * 10 ** 18)
+        self.run(tx, self.contract, block)
+        assert len(self.contract.txs) == 0
+
+    def test_two_withdraws(self):
+        block = Block(timestamp=self.ts_zero + 31 * 86400 + 1)
         block.contract_storage(self.contract.D)[self.contract.D] = 100000 * 10 ** 18
         tx = Tx(sender='alice', value=1000)
         self.run(tx, self.contract, block)
+        assert len(self.contract.txs) == 3
+        assert self.contract.txs == [('alice', 219999999999999999975, 0, 0), ('bob', 219999999999999999975, 0, 0), ('charles', 219999999999999999975, 0, 0)]
         tx = Tx(sender='bob', value=1000)
         self.run(tx, self.contract, block)
         assert len(self.contract.txs) == 3
-        assert self.contract.txs == [('alice', 161999999999999999983, 0, 0), ('bob', 161999999999999999983, 0, 0), ('charles', 161999999999999999983, 0, 0)]
+        assert self.contract.txs == [('alice', 197999999999999999977, 0, 0), ('bob', 197999999999999999977, 0, 0), ('charles', 197999999999999999977, 0, 0)]
