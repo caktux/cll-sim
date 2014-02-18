@@ -12,19 +12,21 @@ class EgalitarianDao(Contract):
             if tx.value < 1000 * 10 ** 18:
                 stop("Insufficient value")
         if contract.storage[k] == 0:
+            if tx.value < 2000 * 10 ** 18:
+                stop("Insufficient fee for storage")
             if contract.storage[k + 1] == 0:
                 contract.storage[k] = 1
                 contract.storage[k + 3] += tx.value - block.basefee * 200
                 stop(tx.sender + " is in.")
         elif contract.storage[k] == 1 and contract.storage[k + 1] == 0:
-            if tx.value < 1000 * 10 ** 18:
+            if tx.value < 2000 * 10 ** 18:
                 stop("Insufficient fee for storage")
             if contract.storage[k + 2] == 0:
                 contract.storage[k + 1] = 1
                 contract.storage[k + 3] += tx.value - block.basefee * 200
                 stop(tx.sender + " is in.")
         elif contract.storage[k + 1] == 1 and contract.storage[k + 2] == 0:
-            if tx.value < 1000 * 10 ** 18:
+            if tx.value < 2000 * 10 ** 18:
                 stop("Insufficient fee for storage")
             contract.storage[k + 2] = 1
             contract.storage[k + 3] += tx.value - block.basefee * 200
