@@ -1,7 +1,7 @@
 from sim import Block, Contract, Tx, Simulation, log, mktx, stop
 
-class EgalitarianDao(Contract):
-    """Egalitarian DAO contract example"""
+class EqualSharesWithdrawals(Contract):
+    """Equal shares withdrawals example contract"""
 
     def run(self, tx, contract, block):
         k = 1000
@@ -42,9 +42,9 @@ class EgalitarianDao(Contract):
             contract.storage[k + 3] -= contract.storage[k + 3] / 3
 
 
-class EgalitarianDaoRun(Simulation):
+class EqualSharesWithdrawalsRun(Simulation):
 
-    contract = EgalitarianDao(A="alice", B="bob", C="charles", D="dao")
+    contract = EqualSharesWithdrawals(A="alice", B="bob", C="charles", D="dao")
     ts_zero = 1392632520
     deposit = 2000 * 10 ** 18
 
