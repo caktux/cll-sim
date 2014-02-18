@@ -3,11 +3,6 @@ from sim import Block, Contract, Tx, Simulation, log, mktx, stop
 class EgalitarianDao(Contract):
     """Egalitarian DAO contract example"""
 
-    A = "alice"
-    B = "bob"
-    C = "charles"
-    D = "dao" + '_' + A + '_' + B + '_' + C
-
     def run(self, tx, contract, block):
         k = 1000
 
@@ -40,16 +35,16 @@ class EgalitarianDao(Contract):
             if tx.value <= block.basefee * 200:
                 stop("Insufficient fee for withdrawal")
 
-            mktx(self.contract.A, contract.storage[k + 3] / 30, 0, 0)
-            mktx(self.contract.B, contract.storage[k + 3] / 30, 0, 0)
-            mktx(self.contract.C, contract.storage[k + 3] / 30, 0, 0)
+            mktx(A, contract.storage[k + 3] / 30, 0, 0)
+            mktx(B, contract.storage[k + 3] / 30, 0, 0)
+            mktx(C, contract.storage[k + 3] / 30, 0, 0)
 
             contract.storage[k + 3] -= contract.storage[k + 3] / 3
 
 
 class EgalitarianDaoRun(Simulation):
 
-    contract = EgalitarianDao()
+    contract = EgalitarianDao(A="alice", B="bob", C="charles", D="dao")
     ts_zero = 1392632520
     deposit = 2000 * 10 ** 18
 
